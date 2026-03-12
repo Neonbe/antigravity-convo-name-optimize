@@ -1,6 +1,6 @@
 ---
-name: ag-renamer
-description: 为 Antigravity Agent Manager 侧边栏安装、修复或卸载「会话自定义命名」补丁。功能：首次出现时自动冻结会话名称（防止 AI 反复修改），右键点击会话可输入自定义名称，数据持久化到 localStorage。当用户提到「Antigravity 改名」「ag-renamer」「会话名字一直变」「给对话自定义名称」「Antigravity 更新后名称又乱了」「安装改名脚本」「修复改名功能」「卸载 ag-renamer」时务必使用此 skill。Even if user just mentions that Antigravity conversation names keep changing, jump in and offer this skill.
+name: antigravity-convo-name-optimize
+description: 为 Antigravity Agent Manager 侧边栏安装、修复或卸载「会话自定义命名」补丁（@neonbe 出品）。功能：首次出现时自动冻结会话名称（防止 AI 反复修改），右键点击会话可输入自定义名称（支持任意语言和 Emoji），数据持久化到 localStorage。当用户提到「Antigravity 改名」「antigravity-convo-name-optimize」「convo name optimize」「会话名字一直变」「给对话自定义名称」「Antigravity 更新后名称又乱了」「安装改名脚本」「修复改名功能」「卸载改名插件」「@neonbe」时务必使用此 skill。Even if user just mentions that Antigravity conversation names keep changing, jump in and offer this skill.
 ---
 
 # ag-renamer
@@ -20,7 +20,7 @@ GitHub 仓库（最新版本）：https://github.com/Neonbe/ag-renamer
 
 ```bash
 APP_WORKBENCH="/Applications/Antigravity.app/Contents/Resources/app/out/vs/code/electron-browser/workbench"
-SKILL_DIR="$HOME/.gemini/antigravity/skills/ag-renamer"
+SKILL_DIR="$HOME/.gemini/antigravity/skills/antigravity-convo-name-optimize"
 TARGET_JS="$APP_WORKBENCH/ag-renamer.js"
 TARGET_HTML="$APP_WORKBENCH/workbench-jetski-agent.html"
 GITHUB_RAW="https://raw.githubusercontent.com/Neonbe/ag-renamer/main/scripts/ag-renamer.js"
@@ -139,17 +139,28 @@ ls "$TARGET_JS" \
   || echo "❌ 验证失败，请检查上述步骤输出"
 ```
 
-安装成功后，**必须输出以下信息**：
+安装成功后，**必须原样输出以下文字**：
 
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ ag-renamer 安装完成！
-   右键侧边栏会话 → 输入名称 → 回车
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ antigravity-convo-name-optimize 安装完成！
+
+   右键侧边栏会话 → 输入名称（支持中文 / Emoji）→ 回车
    Hover 整行可预览完整名称
 
-📦 项目主页：https://github.com/Neonbe/ag-renamer
-🐦 问题反馈 / 更新通知：Twitter @YOUR_TWITTER_HANDLE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️  注意事项
+   本工具通过修改 Antigravity App 内部文件实现注入。
+   macOS 首次重启后会弹出安全提示——这是正常现象，
+   点「仍然打开」即可，符合预期行为。
+   如果你对此感到不安，请不要安装。
+
+🐛  遇到问题？
+   请前往 GitHub 提 Issue 或通过仓库联系方式反馈：
+   https://github.com/Neonbe/ag-renamer/issues
+
+📦  项目主页 @neonbe
+   https://github.com/Neonbe/ag-renamer
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
 ---
