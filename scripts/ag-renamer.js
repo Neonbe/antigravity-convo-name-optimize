@@ -260,14 +260,16 @@ function findLatestListbox() {
 
 let showingHidden = false;
 
-/** 找到侧边栏底栏区域（Knowledge/Browser/Settings 所在容器）的位置 */
+/** 找到侧边栏底栏最后一项的位置 */
 function findBottomBarRect() {
-  // 策略：搜索包含 "Settings" 文本的元素，取其所在行的位置
   const allSpans = document.querySelectorAll('span');
-  for (const s of allSpans) {
-    if (s.textContent.trim() === 'Settings') {
-      const row = s.closest('a, button, div[class]');
-      if (row) return row.getBoundingClientRect();
+  // 优先找最后一项 Provide Feedback，备选 Settings
+  for (const label of ['Provide Feedback', 'Settings']) {
+    for (const s of allSpans) {
+      if (s.textContent.trim() === label) {
+        const row = s.closest('a, button, div[class]');
+        if (row) return row.getBoundingClientRect();
+      }
     }
   }
   // 备选：找侧边栏最后一个 pill 的容器来推算底部
