@@ -1,6 +1,6 @@
 /**
- * ag-renamer.js — Antigravity 会话管理增强 v2.1.0
- * VERSION: 2.1.0
+ * ag-renamer.js — Antigravity 会话管理增强 v2.1.1
+ * VERSION: 2.1.1
  * REPO: https://github.com/Neonbe/antigravity-convo-name-optimize
  *
  * 功能：
@@ -69,13 +69,31 @@ const findPillIn  = el => {
 /** 找到会话行的时间戳文字（如 "3h", "14h", "1d", "now"） */
 function findTimestampText(btn) {
   if (!btn) return null;
-  // 时间戳通常在 pill span 之后的兄弟区域，匹配常见格式
   const allText = btn.querySelectorAll('span, div');
   for (const el of allText) {
     const t = el.textContent.trim();
     if (/^(now|\d+\s*(s|sec|secs|m|min|mins|h|d|w|mo|y)\s*(ago)?)$/i.test(t)) return t;
   }
   return null;
+}
+
+/** 把相对时间戳文字解析为秒数（越小 = 越新） */
+function parseTimestamp(text) {
+  if (!text) return -1;
+  const t = text.trim().toLowerCase();
+  if (t === 'now') return 0;
+  const m = t.match(/^(\d+)\s*(s|sec|secs|m|min|mins|h|d|w|mo|y)/);
+  if (!m) return -1;
+  const n = parseInt(m[1], 10);
+  const unit = m[2];
+  if (unit === 's' || unit === 'sec' || unit === 'secs') return n;
+  if (unit === 'm' || unit === 'min' || unit === 'mins') return n * 60;
+  if (unit === 'h') return n * 3600;
+  if (unit === 'd') return n * 86400;
+  if (unit === 'w') return n * 604800;
+  if (unit === 'mo') return n * 2592000;
+  if (unit === 'y') return n * 31536000;
+  return -1;
 }
 
 function mk(tag, props = {}, styles = {}) {
@@ -235,7 +253,7 @@ function injectMenuOptions(moreBtn) {
             setPending(id, null);
           } else {
             const ts = findTimestampText(btn) || 'now';
-            setPending(id, ts);
+            setPending(id, parseTimestamp(ts));  // 存秒数，不存文字
           }
           moreBtn.click();
           setTimeout(() => document.querySelectorAll(PILL_SEL).forEach(applyAll), 50);
@@ -382,7 +400,7 @@ function refreshBadge() {
 
 // ── 待阅读：时间戳变化检测 ────────────────────────────────────────────────────
 
-/** 扫描所有待阅读会话，如果时间戳跟标记时不同，自动清除 */
+/** 扫描所有待阅读会话，如果时间戳变小了（有新活动），自动清除 */
 function checkPendingTimestamps() {
   const pending = allPending();
   const ids = Object.keys(pending);
@@ -392,12 +410,18 @@ function checkPendingTimestamps() {
     const id = extractId(span);
     if (!id || !pending[id]) return;
     const btn = findRowBtn(span);
-    const currentTs = findTimestampText(btn);
-    if (currentTs && currentTs !== pending[id]) {
-      // 时间戳变了 → 有新活动 → 自动清除待阅读
+    const currentText = findTimestampText(btn);
+    const currentSec  = parseTimestamp(currentText);
+    const storedSec   = pending[id];  // 已是秒数
+
+    if (currentSec < 0 || storedSec < 0) return; // 解析失败，跳过
+
+    // 只有时间戳变小了（新活动把时间重置了）才清除
+    // 用 0.5 倍阈值避免边界抖动（如 "3h" → "2h59m" 的精度差异）
+    if (currentSec < storedSec * 0.5) {
       setPending(id, null);
       applyAll(span);
-      console.log(`[ag-renamer] 🔖 自动清除待阅读: ${id} (${pending[id]} → ${currentTs})`);
+      console.log(`[ag-renamer] 🔖 自动清除待阅读: ${id} (存储${storedSec}s → 当前${currentSec}s “${currentText}”)`);
     }
   });
 }
@@ -446,7 +470,7 @@ function init() {
   checkPendingTimestamps();
   // 定时检查待阅读（时间戳可能被 React 定时刷新覆盖）
   setInterval(checkPendingTimestamps, 5000);
-  console.log('[ag-renamer] ✅ v2.1.0 运行中 — 双击改名 | ⋮ 隐藏/待阅读');
+  console.log('[ag-renamer] ✅ v2.1.1 运行中 — 双击改名 | ⋮ 隐藏/待阅读');
 }
 
 setTimeout(init, 800);
