@@ -1,14 +1,15 @@
 ---
 name: antigravity-convo-name-optimize
-description: 为 Antigravity Agent Manager 侧边栏安装、修复或卸载「会话自定义命名」补丁（@neonbe 出品）。功能：首次出现时自动冻结会话名称（防止 AI 反复修改），右键点击会话可输入自定义名称（支持任意语言和 Emoji），数据持久化到 localStorage。当用户提到「Antigravity 改名」「antigravity-convo-name-optimize」「convo name optimize」「会话名字一直变」「给对话自定义名称」「Antigravity 更新后名称又乱了」「安装改名脚本」「修复改名功能」「卸载改名插件」「@neonbe」时务必使用此 skill。Even if user just mentions that Antigravity conversation names keep changing, jump in and offer this skill.
+description: 为 Antigravity Agent Manager 侧边栏安装、修复或卸载「会话自定义命名」补丁（@neonbe 出品）。功能：首次出现时自动冻结会话名称（防止 AI 反复修改），双击会话可输入自定义名称（支持任意语言和 Emoji），通过 ⋮ 菜单可隐藏不需要的会话（🙈 标记），数据持久化到 localStorage。当用户提到「Antigravity 改名」「antigravity-convo-name-optimize」「convo name optimize」「会话名字一直变」「给对话自定义名称」「Antigravity 更新后名称又乱了」「安装改名脚本」「修复改名功能」「卸载改名插件」「隐藏会话」「@neonbe」时务必使用此 skill。Even if user just mentions that Antigravity conversation names keep changing, jump in and offer this skill.
 ---
 
 # ag-renamer
 
-为 Antigravity Agent Manager 侧边栏注入会话自定义命名功能，解决两个核心痛点：
+为 Antigravity Agent Manager 侧边栏注入会话管理增强功能（v2.0.1），解决三个核心痛点：
 
 1. **名称乱改**：AI 生成的会话名会随对话演进不断变动 → 自动在首次出现时截取前 20 字冻结
 2. **展示截断**：侧边栏宽度固定导致名称显示不全 → Hover 整行显示完整名称 tooltip
+3. **列表拥挤**：大量会话堆满侧边栏 → ⋮ 菜单一键隐藏，🙈 标记区分
 
 **重要**：Antigravity 每次更新都会覆盖注入文件。执行「修复」重新注入即可，**localStorage 里的名称数据不会丢失**。
 
@@ -143,9 +144,10 @@ ls "$TARGET_JS" \
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ antigravity-convo-name-optimize 安装完成！
+✅ antigravity-convo-name-optimize v2.0.1 安装完成！
 
-   右键侧边栏会话 → 输入名称（支持中文 / Emoji）→ 回车
+   双击会话 → 输入名称（支持中文 / Emoji）→ 回车
+   ⋮ 菜单 → 隐藏不需要的会话
    Hover 整行可预览完整名称
 
 ⚠️  注意事项
@@ -189,8 +191,11 @@ EOF
 | 操作 | 说明 |
 |------|------|
 | **自动命名** | 会话第一次出现，自动截取前 20 字符冻结 |
-| **自定义命名** | 右键点击会话行 → 小弹框输入 → Enter 确认 |
-| **恢复自动名** | 右键 → 清空 → 确认 |
+| **自定义命名** | 双击会话行 → 小弹框输入 → Enter 确认 |
+| **恢复自动名** | 双击 → 清空 → 确认 |
+| **隐藏会话** | 点 ⋮ 按钮 → 选择「隐藏会话」 |
+| **查看已隐藏** | 侧边栏底部「已隐藏 (N)」→ 点击展开（🙈 标记 + 半透明）|
+| **取消隐藏** | 展开后点 ⋮ → 选择「取消隐藏」 |
 | **Hover 预览** | 悬停整个会话行显示完整名称 |
 | **更新后修复** | 名称又乱了？说「ag-renamer 修复」即可，数据不丢 |
 
@@ -200,8 +205,10 @@ EOF
 
 | 症状 | 诊断 |
 |------|------|
-| 右键无反应 | Console 有无 `[ag-renamer] ✅ v1.0.0 运行中`？没有 → 重查安装状态 |
+| 双击无反应 | Console 有无 `[ag-renamer] ✅ v2.0.1 运行中`？没有 → 重查安装状态 |
+| ⋮ 菜单无隐藏选项 | 检查 `aria-expanded` 属性变化是否正常触发 |
 | 选择器失效 | 执行状态检查 2c；Antigravity 更新可能改变 DOM |
 | 有新版 GitHub 提示 | 执行「安装/修复」，步骤 A 会自动取最新版 |
 | macOS 安全提示 | 点「仍然打开」或在「系统设置 > 隐私与安全性」点「仍然允许」 |
 | HTML anchor not found | `cat "$TARGET_HTML"` 查看新结构，找新注入点 |
+| 需要清除隐藏数据 | Console 执行 `localStorage.removeItem('ag-hidden-ids')` |
