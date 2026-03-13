@@ -27,14 +27,14 @@ const MOREV_SEL  = 'button[aria-haspopup="listbox"]';
 
 // 颜色
 const C = {
-  text:       '#cdd6f4',
-  textMuted:  '#a6adc8',
-  textDimmed: '#6c7086',
-  bg:         '#1e1e2e',
-  bgHover:    '#313244',
-  border:     '#3a3a5c',
-  accent:     '#89b4fa',
-  accentText: '#1e1e2e',
+  text:       '#cccccc',
+  textMuted:  '#9d9d9d',
+  textDimmed: '#6b6b6b',
+  bg:         '#1e1e1e',
+  bgHover:    '#2a2a2a',
+  border:     '#333333',
+  accent:     '#0078d4',
+  accentText: '#ffffff',
 };
 
 // ── 存储 ──────────────────────────────────────────────────────────────────────
